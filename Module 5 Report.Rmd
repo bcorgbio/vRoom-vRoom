@@ -10,22 +10,26 @@ bibliography: Biol3140.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r, echo=FALSE}
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+## Introduction
 
-You can also embed plots, for example:
+A study conducted by @lim2008human discusses the importance of thermoregulation in protecting the body from the consequences related to the over heating of the body, claiming that these consequences start arising at 39.5°C and that without thermoregulatoin the body could reach 42.0°C during strenuous exercise. This led us to pose the question does body temperature still vary in human subjects according to activity level?
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+## Methods
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The four participants in this study sat in a chair for five minutes and then had their temperature recorded for 100 seconds and then did 5 minutes of jumping jacks and immediately got their temperature recorded for another 100 seconds.
+
+The temperature was recorded using a DHT11 sensor connected to an Arduino board. The DHT11 sensor was placed in a small plastic bag and in the particitant's armpit during the time of data collection.
+
+## Results
+
+## Discussion
+
+## Author Contributions
+
+## References
