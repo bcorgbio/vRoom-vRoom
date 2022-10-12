@@ -6,7 +6,7 @@ output: html_document
 bibliography: Biol3140.bib
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
@@ -40,9 +40,9 @@ A study conducted by @lim2008human discusses the importance of thermoregulation 
 
 ## Methods
 
-The four participants in this study sat in a chair for five minutes and then had their temperature recorded for 100 seconds and then did 5 minutes of jumping jacks and immediately got their temperature recorded for another 100 seconds.
+The four participants in this study sat in a chair for five minutes and then had their temperature recorded for 100 seconds. They then did 5 minutes of jumping jacks and immediately got their temperature recorded for another 100 seconds.
 
-The temperature was recorded using a DHT11 sensor connected to an Arduino board. The DHT11 sensor was placed in a small plastic bag and in the particitant's armpit during the time of data collection.
+The temperature was recorded using a DHT11 sensor connected to an Arduino board. The DHT11 sensor was placed in a small plastic bag and in the participant's armpit for 5 minutes so that the sensor warmed up to body temperature and the data was then recorded 100 seconds.
 
 ## Results
 
