@@ -6,7 +6,7 @@ output: html_document
 bibliography: Biol3140.bib
 ---
 
-```{r setup, include=TRUE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
@@ -24,14 +24,6 @@ for(i in dat.f){
 }
 dat <- do.call(rbind,dat.l) #combine the list into table
 
-dat%>%
-  ggplot()+geom_boxplot(aes(x=activity,y=degC))+facet_grid(.~who) #plot to see what we get
-```
-
-
-
-```{r, echo=FALSE}
-
 ```
 
 ## Introduction
@@ -45,6 +37,13 @@ The four participants in this study sat in a chair for five minutes and then had
 The temperature was recorded using a DHT11 sensor connected to an Arduino board. The DHT11 sensor was placed in a small plastic bag and in the participant's armpit for 5 minutes so that the sensor warmed up to body temperature and the data was then recorded 100 seconds.
 
 ## Results
+
+```{r, echo=FALSE}
+
+dat%>%
+  ggplot()+geom_boxplot(aes(x=activity,y=degC))+facet_grid(.~who)  #plot to see what we get
+
+```
 
 ## Discussion
 
