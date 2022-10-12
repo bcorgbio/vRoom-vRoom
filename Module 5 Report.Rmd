@@ -6,7 +6,7 @@ output: html_document
 bibliography: Biol3140.bib
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
