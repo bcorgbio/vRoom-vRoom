@@ -41,7 +41,7 @@ The temperature was recorded using a DHT11 sensor connected to an Arduino board.
 ```{r, echo=FALSE}
 
 dat%>%
-  ggplot()+geom_boxplot(aes(x=activity,y=degC))+facet_grid(.~who)  #plot to see what we get
+  ggplot(aes(x=activity,y=degC))+geom_boxplot()+facet_grid(.~who)  #plot to see what we get
 
 ```
 
