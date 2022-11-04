@@ -7,6 +7,16 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(Momocs)
+library(ape)
+library(phytools)
+library(RRphylo)
+library(vroom)
+library(ape)
+library(ggtree)
+library(wesanderson)
 ```
 
 ## Introduction
