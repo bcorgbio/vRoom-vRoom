@@ -21,14 +21,6 @@ out %>%
 #make a large df with vroom
 out.df <- vroom::vroom(f, id = "filename")
 
-#make list
-outs.l <- sapply(f,function(x) out.df %>% filter(filename==x) %>% select(X,Y) %>% as.matrix)
-
-outs.l %>% 
-  Out() %>% #takes a list of matrices and makes each individual matrix into an outline
-  coo_flipx() %>% #closed outlines, flips the outline about the x axis bc when looking at plots the origin is in the lower left but for image analysis covention is upper left
-  stack() #stacks all the  outlines on one another
-
 #add wing info
 out.df <- out.df %>% 
   mutate(wing=gsub("XY_.+_(hindwing|forewing)\\..+","\\1",basename(filename))) %>% 
@@ -69,6 +61,7 @@ fore.min <- forewings %>% #minumum number of points in all our outlines
 
 forewings %>%
   coo_interpolate(fore.min) %>% #goes around outline, fits high res spline and picsk the same # of points in each outline (here min # of point in dataset)
+  coo_align()  %>%
   fgProcrustes() %>% #procrustese superinposition
   stack()
 
@@ -87,17 +80,6 @@ hindwings %>%
 #the little arrows represent the first point in the outline
 #EFA - elliptical fourrier analysis
 #normalization - should all the sizes be normalized to a similar scales? DO NOT WANT TO NORMALIZE bc we have elliptical shapes
-forewings %>%
-  coo_interpolate(fore.min) %>% 
-  coo_align()  %>%
-  fgProcrustes() %>% 
-  efourier(norm=FALSE) #not normalizing the coefficient values
-
-hindwings %>% 
-  coo_interpolate(hind.min) %>% 
-  coo_align()  %>%
-  fgProcrustes() %>% 
-  efourier(norm=FALSE) #not normalizing the coefficient values
 
 #performing PCA
 forewing.pca <- forewings %>%
@@ -115,13 +97,6 @@ hindwing.pca <-hindwings %>%
   fgProcrustes() %>% 
   efourier(norm=FALSE) %>% 
   PCA()
-
-hindwings %>% 
-  coo_interpolate(hind.min) %>% 
-  coo_align()  %>%
-  coo_slide(id=1) %>% 
-  fgProcrustes() %>% 
-  stack
 
 #just plot the PCA
 forewing.pca %>% 
