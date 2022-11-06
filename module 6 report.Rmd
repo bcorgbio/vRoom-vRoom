@@ -367,10 +367,11 @@ summary(lm(hind~fore,PC2.pic))
 
 ```
 ## Introduction
-
+The Lepidopteras comprise of about 160,000 different species and are best known for their diversity in terms of their hind and forewings. It's been observed that their hind and forewings both play a separate role in flight. For example, butterflies are able to fly with just their forewings however, at a slower speed with less fluidity. Each specie of Lepidoptera has a unique shape and wing pattern however, the differences between each specie brings up the question of whether or not Lepidopteras have evolved to favor a larger forewing or hindwing or favor a smaller forewing to hindwing ratio. This project served to find trends within their wing evolution to see if a certain proportion was selected for within Lepidoptera evolution.
 
 
 ## Methods
+To test whether or not a certain proportion of forewing to hindwing ratio is favored in terms of Lepidoptera evolution photos of lepidopteras sourced from the Global Biodiversity Information Facility were analyzed using an app called Fiji. First, scales were set if there was none present. Second, images were flipped if there was damage to the right wing pair. To digitize the wings, a polygon tool was selected to trace the wings. Origin tracing points were made sure to stay relatively the same from wing to wing. About 30 points were used to trace the wings. Once the right wings were traced, Marco was ran and the results were saved according to forewing or hindwing. From then on, R was used for shape analysis. Wings were placed on top of each other within the analysis and differences were plotted to detect trends.
 
 
 
