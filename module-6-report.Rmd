@@ -172,7 +172,9 @@ hindwing.pca <-hindwings %>%
 
 ```
 
+
 Once the forewing and hindwing data was separated into different data sets to analyze each and compare, and a Procrustes transformation was conducted for shape analysis, then the elliptical Fourier analysis (EFA) and Principle Components Analysis (PCA) could be performed. We found that for the forewings, PC1 described 69.1% of the variation within species and PC2 described 11.5%, together they described 80.6% of variation. For the hindwing, the PCs were a little more powerful. PC1 described 46.1% of variation, and PC2 37.7%, so together they described 83.8% of variation.
+
 
 ```{r, echo=FALSE, "Plotting PCA Forewing", fig.cap="PCA distribution of PC 1 and PC 2 for the forewing", fig.align='center'}
 
@@ -273,7 +275,9 @@ forePC2.BM<-brownie.lite(lep.tree2,fore.pc2*10)
 hindPC2.BM<-brownie.lite(lep.tree2,hind.pc2*10)
 ```
 
+
 To answer the first question of whether the rates of wing-shape evolution were different between the hind- and forewing, the evolutionary rates of the PC scores can be evaluated. These values were stored for each wing with PC1 and PC2, using the noncensored test. We found the forewing PC1 score to be 0.006535527, the hindwing PC1 to be 0.01014157, the forewing PC2 to be 0.002411568, and the hindwing PC2 to be 0.01870921.
+
 
 ```{r, "Estimated Single Rates", include=TRUE}
 forePC1.BM$sig2.single
@@ -283,7 +287,9 @@ forePC2.BM$sig2.single
 hindPC2.BM$sig2.single
 ```
 
+
 To answer the second question of whether major lineages of the Lepidoptera have undergone significant shifts in evolutionary rate, we can use the evolutionary rates of the PC scores across the Lepidopteran tree. The nodes with exceptional shifts can be visualized in the produced phylogentic trees, highlighted by a blue downwards triangle for low shifts or a red upwards triangle for high shifts. Our data show a blue downwards triangle for Macroheterocera: Noctuoidea for both fore- and hindwing PC1, and forewing PC2, while hindwing PC2 resulted in a blue downwards arrow for crown-Obtectomera: Papilionoidea. 
+
 
 ```{r, "forewing PC1 evolution", include=FALSE}
 
@@ -301,7 +307,6 @@ forePC1.plot$plotClades()
 ```{r, echo=FALSE, message= FALSE, "forewing PC1 evolution plots", fig.cap="The Lepidoptery lineage, with a significant evolutionary low shift of PC 1 in the forewing highlighted", fig.align='center'}
 forePC1.res <- plot_SS(lep.tree2,forePC1.SS,tax = tax.names)
 forePC1.res$plot
-forePC1.res$res
 ```
 
 ```{r, "hindwing PC1 evolution", include=FALSE}
@@ -322,7 +327,6 @@ hindPC1.plot$plotClades()
 ```{r, echo=FALSE, message= FALSE, "hindwing PC1 evolution plots", fig.cap="The Lepidoptery lineage, with a significant evolutionary low shift of PC 1 in the hindwing highlighted", fig.align='center'}
 hindPC1.res <- plot_SS(lep.tree2,hindPC1.SS,tax = tax.names)
 hindPC1.res$plot
-hindPC1.res$res
 ```
 
 ```{r,"forewing PC2 evolution", include=FALSE}
@@ -341,7 +345,6 @@ forePC2.plot$plotClades()
 ```{r, echo=FALSE, message= FALSE, "forewing PC2 evolution plots", fig.cap="The Lepidoptery lineage, with a significant evolutionary low shift of PC 2 in the forewing highlighted", fig.align='center'}
 forePC2.res <- plot_SS(lep.tree2,forePC2.SS,tax = tax.names)
 forePC2.res$plot
-forePC2.res$res
 ```
 
 ```{r, "hindwing PC2 evolution", include=FALSE}
@@ -360,6 +363,12 @@ hindPC2.plot$plotClades()
 ```{r, echo=FALSE, message= FALSE, "hindwing PC2 evolution plots",fig.cap="The Lepidoptery lineage, with a significant evolutionary low shift of PC 2 in the hindwing highlighted", fig.align='center'}
 hindPC2.res <- plot_SS(lep.tree2,hindPC2.SS,tax = tax.names)
 hindPC2.res$plot
+```
+
+```{r, "search.shift outputs", include=FALSE}
+forePC1.res$res
+hindPC1.res$res
+forePC2.res$res
 hindPC2.res$res
 ```
 
@@ -382,8 +391,9 @@ PC1.pic %>%
 ```
 
 ```{r, "PC1 evolution correlation summary", echo=FALSE, fig.cap="Summary of the linear model comparing PC1 in hingwing and forewing", fig.align='center'}
-summary(lm(hind~fore,PC1.pic))
+sum1 <- summary(lm(hind~fore,PC1.pic))
 ```
+Summary of the linear model comparing PC1 in hindwing and forewing
 
 ```{r, "PC2 evolution correlation", include=FALSE}
 
@@ -401,11 +411,13 @@ PC2.pic %>%
   ggplot(aes(x=fore,y=hind))+geom_point()+geom_smooth(method="lm")
 ```
 
-```{r, "PC2 evolution correlation summary", echo=FALSE, fig.cap="Summary of the linear model comparing PC2 in hingwing and forewing", fig.align='center'}
+```{r, "PC2 evolution correlation summary", echo=FALSE, fig.cap="Summary of the linear model comparing PC2 in hindwing and forewing", fig.align='center'}
 summary(lm(hind~fore,PC2.pic))
 ```
+Summary of the linear model comparing PC2 in hindwing and forewing
 
 ## Discussion
+
 For both PC’s, the hindwing has a larger rate of evolution compared to the forewing. For PC1, the hindwing was 1.55 times greater than the forewing. PC2 showed an even larger difference, with a 7.76 times difference favoring the hindwing over the forewing. Our investigations into specific lineage with significant evolutionary rate showed only two groups: the Noctuoidea and the Papilionidea. The Noctuoidea had a significantly low shift in PC1 for the forewing and hindwing, and a low shift in the PC2 of the forewing, while the Papilionidea had a significantly low shift in the PC2 of the hindwing. The phylogenetic independent contrasts (PIC) analysis revealed that for PC1 there is a significant negative correlation between hindwing and forewing shape, but there is no significant correlation PC2. Our study found that the forewing evolved at a slower evolutionary rate than the hindwing, supporting the idea that stabilizing selection is involved in forewing evolution. Despite this, our analysis showed a correlation in the shape of the different wings. The linked evolution may support the like that, while the forewing is primarily helpful for flight, the hindwing allows for better control during flight [jantzen2008hindwings]. Furthermore, it was shown that there are significantly low evolutionary rate shifts in a couple of Lepidoptera lineages.
 
 ## Author Contributions
