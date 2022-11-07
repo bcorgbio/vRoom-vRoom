@@ -367,7 +367,8 @@ summary(lm(hind~fore,PC2.pic))
 
 ```
 ## Introduction
-The Lepidopteras comprise of about 160,000 different species and are best known for their diversity in terms of their hind and forewings. It's been observed that their hind and forewings both play a separate role in flight. For example, butterflies are able to fly with just their forewings however, at a slower speed with less fluidity. Each specie of Lepidoptera has a unique shape and wing pattern however, the differences between each specie brings up the question of whether or not Lepidopteras have evolved to favor a larger forewing or hindwing or favor a smaller forewing to hindwing ratio. This project served to find trends within their wing evolution to see if a certain proportion was selected for within Lepidoptera evolution.
+The Lepidopteras comprise of about 160,000 different species and are best known for their diversity in terms oftheir hind and forewings. It's been observed that their hind and forewings both play a separate role in flight. For example, butterflies are able to fly with just their forewings however, at a slower speed with less fluidity. Each specie of Lepidoptera has a unique shape and wing pattern however, the differences between each specie brings up the question of whether or not Lepidopteras have evolved to favor a larger forewing or hindwing or favor a smaller forewing to hindwing ratio. While looking at their wings, it is important to note that there are variations within species as wing size within certain species, especially those who migrate, “could be influenced by other environmental factors depending on where butterflies are hatched and grow up” [freedman2020two]. This project served to find trends within their wing evolution to see if a certain proportion was selected for within Lepidoptera evolution.
+
 
 
 ## Methods
@@ -385,6 +386,8 @@ To test whether or not a certain proportion of forewing to hindwing ratio is fav
 
 ## Author Contributions
 
+CP did the coding for this project. SF did the introduction and the methods section.
 
 
 ## References
+
