@@ -1,0 +1,79 @@
+---
+title: "Module 5 Report"
+author: "vRoom-vRoom"
+date: "`r Sys.Date()`"
+output: html_document
+bibliography: Biol3140.bib
+---
+
+<!-- for comments -->
+<style>
+div.comment pre { background-color:#ffbbbb; }
+div.comment pre.r { background-color:#ffbbbb; }
+div.comment {color: red;}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+dat.f <- list.files(pattern = "chair|active.csv") #find the files
+
+dat.l <- list() #make an empty list
+
+for(i in dat.f){
+  met.dat<- unlist(strsplit(i,"_")) #split of the filename string
+  who <- met.dat[1] #store the first element
+  activity <- gsub(".csv","",met.dat[2]) #store second element, dropping CSV with gsub()
+  dat.l[[i]]<- read_csv(i)%>%
+    mutate(who=who,activity=activity) #read, then store data with additional columns of metada in list as position unique to i
+  
+}
+dat <- do.call(rbind,dat.l) #combine the list into table
+
+```
+
+## Introduction
+
+A study conducted by @lim2008human discusses the importance of thermoregulation in protecting the body from the consequences related to the over heating of the body, claiming that these consequences start arising at 39.5°C and that without thermoregulatoin the body could reach 42.0°C during strenuous exercise. This led us to pose the question does body temperature still vary in human subjects according to activity level?
+
+## Methods
+
+The four participants in this study sat in a chair for five minutes and then had their temperature recorded for 300 seconds. They then did 5 minutes of jumping jacks and immediately got their temperature recorded for another 300 seconds.
+
+The temperature was recorded using a DHT11 sensor connected to an Arduino board. The DHT11 sensor was placed in a small plastic bag and in the participant's armpit for 5 minutes so that the sensor warmed up to body temperature and the data was then recorded 300 seconds.
+
+## Results
+
+
+```{r, echo=FALSE, fig.cap="Box plot of temperature range in celcius depending on type of activity for subjects", fig.align='center'}
+  
+dat%>%
+  ggplot(aes(x=activity,y=degC))+geom_boxplot()+facet_grid(.~who)  #plot to see what we get
+
+```
+
+For all participants the data ranged from 35.3°C to 37.4°C, with the exception of Steve's who's active data went below 35.0°C and chair data went above 37.5°C as well as Stefanie's chair data which reached below 34.5°C. All, but three means were at 36.3°C. 
+
+## Discussion
+
+Our findings display no correlation between temperature variation and activity level. When comparing the overall data for sedentary body temperature to the body temperature data after performing a cardiovascular exercise —jumping jacks— for five minutes, body temperatures tended to be similar. The DHT 11 sensor that was used only recorded temperatures at specific values consistent with each subject, which may be what led to our very consistent data. As our bodies try to maintain homeostasis, we sweat and the evaporation of sweat cools us down. Our bodies’ body temperature regulation to maintain homeostasis works well according to our data as both of our pre-active and post-active body temperatures are similar.
+
+The study conducted by @tanda2018total shows that body temperature lowers during exercise but immediately returns to the original body temperature at rest as soon as the exercise halted. This agrees with data which showed no change of body temperature before and immediately after exercise.
+
+## Author Contributions
+
+Clem- Helped collect data, and wrote the introduction, methods and references
+
+Stephanie- Wrote the discussion and helped write the methods
+
+Stephen- Operated the data collecting equipment, helped analyze the results 
+
+Laura- Looked at previous studies and helped write the results
+
+<div class="comment">
+Hit it out of the park!!! Great figure, clear and concise analysis, and some nice contexual remarks concerning the literature. 75/75
+
+</div>
+
+## References
