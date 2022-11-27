@@ -1,16 +1,113 @@
 ---
-title: "Module 7"
-author: "vRoom vRoom"
-date: "2022-11-27"
+title: "Module 7 Project"
+author: "vRoom-vRoom"
+date: "11-27-22
 output: html_document
-bibliography: Biol3140.bib
+bibliography: BIOL3140.bib
 ---
-
-```{r setup, include=FALSE}
+````{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-force.dat <- list.files("Project 8 data",pattern=".csv",full.names = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(vroom)
+library(readr)
+library(dplyr)
+library(MuMIn)
 
-for (i in force.dat)
-```
+dat.fat <- list.files(path = "Project 8 data", recursive = TRUE,
+                  pattern = ".csv", 
+                  full.names = TRUE)
 
+dat.l <- list() #empty list
+
+for(i in dat.fat){
+  met.dat<- unlist(strsplit(i,"_"))
+  group <- gsub("Project 8 data/", " ", met.dat[1])
+  subject <- met.dat[2]
+  ang <- as.numeric(met.dat[3])
+  activity <- gsub(".csv","",met.dat[4])
+  
+  dat.l[[i]]<- read_delim(i, delim= " ", col_names = c("Reading","Force","Unit"))%>%
+    mutate(Group=group,Subject=subject, Angle=ang, Activity = activity)
+  
+}
+data <- do.call(rbind,dat.l) #get data into one tibble
+
+
+dat.1 <- arrange(dat, Group, Subject, Angle) %>% 
+  filter(Angle != 22.5)
+
+dat.max_recording <- dat.1 %>% 
+  group_by(Subject, Angle, Activity) %>% 
+  summarize(max_recording = max(Force))
+
+
+dat.max_subject <- dat.1 %>% 
+  group_by(Subject, Activity) %>% 
+  summarize(max_subject = max(Force))
+
+
+dat.max_joined <- dat.max_subject %>% 
+  left_join(dat.max_recording) %>% 
+  group_by(Subject, Angle, Activity) %>% 
+  mutate(max_norm = max_recording/max_subject)
+
+
+dat.max_joined %>% 
+  ggplot(aes(Angle,max_norm,col=Activity))+geom_point()
+
+dat.class_means <- dat.max_joined %>% 
+  group_by(Angle, Activity) %>% 
+  mutate(class_mean = mean(max_norm))
+
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
+
+
+AICs <- dat.max_joined%>%
+  group_by(Subject,Activity)%>%
+  summarize(
+    m2=AICc(lm(max_norm~poly(Angle,2))), #second order
+    m3=AICc(lm(max_norm~poly(Angle,3))), #third order
+    m4=AICc(lm(max_norm~poly(Angle,4))) #fourth order
+  )%>%
+  pivot_longer(m2:m4,names_to="model",values_to="AICc")%>%
+  print()
+
+x.pred<-seq(45,157.5,length.out=1000)
+fits <- dat.max_joined%>%
+  group_by(Subject,Activity)%>%
+  summarize(
+    m2=predict(lm(max_norm~poly(Angle,2)),newdata=data.frame(Angle=x.pred)), #second order
+    m3=predict(lm(max_norm~poly(Angle,3)),newdata=data.frame(Angle=x.pred)), #third order
+    m4=predict(lm(max_norm~poly(Angle,4)),newdata=data.frame(Angle=x.pred)) #fourth order
+  )%>%
+  pivot_longer(m2:m4,names_to="model")%>%
+  group_by(Subject,Activity,model)%>%
+  summarize(theta_max=x.pred[which.max(value)])%>%
+  print()
+
+best.models <- fits%>%
+  left_join(AICs)%>%
+  group_by(Subject,Activity)%>%
+  mutate(best=AICc==min(AICc))%>%
+  filter(best==TRUE)%>%
+  dplyr::select(-best)%>%
+  print()
+
+anova(lm(theta_max~Activity,best.models))
+
+best.models%>%
+  filter(Subject != 25) %>% 
+  pivot_wider(id_cols=Subject,names_from = Activity,values_from=theta_max)%>%
+  mutate(shift=fatigue-control)%>%
+  ungroup()%>%
+  summarise(mean.shift=mean(shift),se.shift=sd(shift)/sqrt(length(shift)))
+`````
+# Introduction
+
+# Methods
+
+## Setting up Data
