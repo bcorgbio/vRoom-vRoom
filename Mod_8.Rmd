@@ -1,0 +1,47 @@
+---
+title: "Module 8"
+author: "vRoom vRoom"
+date: "2022-11-27"
+output: html_document
+bibliography: Biol3140.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rgbif)
+library(tidyverse)
+library(MuMIn)
+library(rnoaa)
+library(data.table)
+library(ggmap)
+library(usmap)
+library(lme4)
+library(car)
+
+species <- c("Myiarchus crinitus","Icterus galbula","Pheucticus ludovicianus","Coccyzus americanus","Setophaga caerulescens")
+
+y <- paste0("1990",",","2019")
+m <- paste0("3",",","6")
+
+dat.l <-list()
+
+for(s in species){
+  n.obs <-  occ_data(scientificName = s, year = y, month = m, limit = 0, country = "US", basisOfRecord = "HUMAN_OBSERVATION", stateProvince="Massachusetts")$meta$count 
+
+print(n.obs)
+
+dat.l[[paste0(s)]] <- occ_data(scientificName = s, year = y, month = m, 
+                               limit = n.obs, country = "US",
+                               basisOfRecord = "HUMAN_OBSERVATION",
+                               stateProvince = "Massachusetts")[[2]]
+
+}
+
+dat <- rbindlist(dat.l,fill=T)
+
+head(dat)
+
+
+```
+
