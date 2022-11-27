@@ -8,5 +8,9 @@ bibliography: Biol3140.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+force.dat <- list.files("Project 8 data",pattern=".csv",full.names = TRUE)
+
+for (i in force.dat)
 ```
 
