@@ -27,7 +27,7 @@ To study the force-length (FL) relationship of the muscle depensing on the muscl
 For the data analysis part of this project, the first step was to, each individual, find the maximum force of each of the MVC recording, then the maximum force (Fmax) across all of the angles of the experiments (either control or fatigued), and then divide each maximum force for each angle by Fmax, which normalized the values.
 It was then possible to look at which angle Fmax was at. The data for both the control muscles and the fatigued muscles were plotted on the same graphs in order to allow for an easier visualization of the shift of the angle at which Fmax occurred. Finally, to quantify this shift, the angle of Fmax for the control was subracted from the angle of Fmax for the fatigued muscles to find the mean shift, quantitatively.
 
-##Results
+## Results
 After the class data was collected, the maximum force of all angles for each experiment of every individual was found, and was used to normalize the values. 
 
 To investigate if force-angle data for MVCs follow typical FL relationships in either condition, the maximum force for all angles will and experiments will be plotted. To better see the relationship, the mean maximum force of each angle was calculated.
