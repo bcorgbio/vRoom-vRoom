@@ -1,7 +1,7 @@
 ---
 title: "Module 7 Project"
 author: "vRoom-vRoom"
-date: "11-27-22
+date: "11-27-22"
 output: html_document
 bibliography: BIOL3140.bib
 ---
@@ -15,7 +15,24 @@ library(vroom)
 library(readr)
 library(dplyr)
 library(MuMIn)
+`````
+## Introduction
 
+The aim of this project was to study the shift of the Force-Length relationship of muscles depending on whether they are non-fatigued (control) or fatigued. The goal was to see whether there was a significant shift in the angle at which the maximum isometric force occurred. Prior studies have found that there is indeed a correlation and that compared to non-fatigued muscles, fatigued ones are associated with a shift to the right, meaning that "fatigued muscles favor force generation at longer lengths" [@biewener2006tired]. To further study this relationship and verify this hypothesis class-wide data on maximum voluntary contractions was collected both for fatigued and non-fatigued muscles and was then analysed in an effort to see whether this data set also showed a rightward shift.
+
+## Methods
+
+To study the force-length (FL) relationship of the muscle depensing on the muscle fatigue, we constructed a goniometer to measure the forearms angles relative to the upper arm, and measured the maximum force output, or maximum voluntary contractions (MVC) from the forearms at every 11.25° from 45° to 157.5°. The force output was measured 12 times when the muscle was non-fatigued because it had been at rest (control) using a 40-kg Load Cell with an HX711 amplifier as well as an Arduino Uno micro-controller. The forearm flexors were then eccentrically fatigued using a heavy bag that was repeatedly lowered for a total of three minutes. After a two minute rest, the MVCs were recorded another 12 times, now for the fatigued muscles, with the same set-up as for the control group. 
+
+For the data analysis part of this project, the first step was to, each individual, find the maximum force of each of the MVC recording, then the maximum force (Fmax) across all of the angles of the experiments (either control or fatigued), and then divide each maximum force for each angle by Fmax, which normalized the values.
+It was then possible to look at which angle Fmax was at. The data for both the control muscles and the fatigued muscles were plotted on the same graphs in order to allow for an easier visualization of the shift of the angle at which Fmax occurred. Finally, to quantify this shift, the angle of Fmax for the control was subracted from the angle of Fmax for the fatigued muscles to find the mean shift, quantitatively.
+
+##Results
+After the class data was collected, the maximum force of all angles for each experiment of every individual was found, and was used to normalize the values. 
+
+To investigate if force-angle data for MVCs follow typical FL relationships in either condition, the maximum force for all angles will and experiments will be plotted. To better see the relationship, the mean maximum force of each angle was calculated.
+
+```{r, "organizing class data", include=FALSE}
 dat.fat <- list.files(path = "Project 8 data", recursive = TRUE,
                   pattern = ".csv", 
                   full.names = TRUE)
@@ -54,10 +71,26 @@ dat.max_joined <- dat.max_subject %>%
   group_by(Subject, Angle, Activity) %>% 
   mutate(max_norm = max_recording/max_subject)
 
+dat.class_means <- dat.max_joined %>% 
+  group_by(Angle, Activity) %>% 
+  mutate(class_mean = mean(max_norm))
 
-dat.max_joined %>% 
-  ggplot(aes(Angle,max_norm,col=Activity))+geom_point()
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
 
+```
+
+```{r,  echo=FALSE,"Plot of mean maximum force per angle for both control and fatigue Experiments", fig.cap="Plot of mean normalized maximum force angles for both control and fatigued experiments", fig.align='center'}
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
+```
+
+
+To investigate if there is a significant shift in the maximum isometric force between control and fatigued groups, the difference in the angle at which the maximum force occurred will be examined. Since the angle of maximum force likely occured between measurements, the data from each experiment will be fitted one of several polynomial models, with the max of the best fitting model representing the angle of maximum force.
+To test if there is a significant shift, an ANOVA test was conducted.
+
+
+```{r, "fitting best model ",include=FALSE}
 dat.class_means <- dat.max_joined %>% 
   group_by(Angle, Activity) %>% 
   mutate(class_mean = mean(max_norm))
@@ -97,25 +130,22 @@ best.models <- fits%>%
   dplyr::select(-best)%>%
   print()
 
-anova(lm(theta_max~Activity,best.models))
+```
 
+```{r,"Anova Test", echo =FALSE}
+
+anova(lm(theta_max~Activity,best.models))
+```
+
+Finally, the mean shift and standard error was calculated.
+```{r, "mean shift calculation", echo=FALSE}
 best.models%>%
   filter(Subject != 25) %>% 
   pivot_wider(id_cols=Subject,names_from = Activity,values_from=theta_max)%>%
   mutate(shift=fatigue-control)%>%
   ungroup()%>%
   summarise(mean.shift=mean(shift),se.shift=sd(shift)/sqrt(length(shift)))
-`````
-## Introduction
-
-The aim of this project was to study the shift of the Force-Length relationship of muscles depending on whether they are non-fatigued (control) or fatigued. The goal was to see whether there was a significant shift in the angle at which the maximum isometric force occurred. Prior studies have found that there is indeed a correlation and that compared to non-fatigued muscles, fatigued ones are associated with a shift to the right, meaning that "fatigued muscles favor force generation at longer lengths" [@biewener2006tired]. To further study this relationship and verify this hypothesis class-wide data on maximum voluntary contractions was collected both for fatigued and non-fatigued muscles and was then analysed in an effort to see whether this data set also showed a rightward shift.
-
-## Methods
-
-To study the force-length (FL) relationship of the muscle depensing on the muscle fatigue, we constructed a goniometer to measure the forearms angles relative to the upper arm, and measured the maximum force output, or maximum voluntary contractions (MVC) from the forearms at every 11.25° from 45° to 157.5°. The force output was measured 12 times when the muscle was non-fatigued because it had been at rest (control) using a 40-kg Load Cell with an HX711 amplifier as well as an Arduino Uno micro-controller. The forearm flexors were then eccentrically fatigued using a heavy bag that was repeatedly lowered for a total of three minutes. After a two minute rest, the MVCs were recorded another 12 times, now for the fatigued muscles, with the same set-up as for the control group. 
-
-For the data analysis part of this project, the first step was to, each individual, find the maximum force of each of the MVC recording, then the maximum force (Fmax) across all of the angles of the experiments (either control or fatigued), and then divide each maximum force for each angle by Fmax, which normalized the values.
-It was then possible to look at which angle Fmax was at. The data for both the control muscles and the fatigued muscles were plotted on the same graphs in order to allow for an easier visualization of the shift of the angle at which Fmax occurred. Finally, to quantify this shift, the angle of Fmax for the control was subracted from the angle of Fmax for the fatigued muscles to find the mean shift, quantitatively.
+```
 
 ## Author Contributions
 Stefanie Flores did the coding for this project.
