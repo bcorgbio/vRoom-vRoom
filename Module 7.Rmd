@@ -18,11 +18,11 @@ library(MuMIn)
 `````
 ## Introduction
 
-The aim of this project was to study the shift of the Force-Length relationship of muscles depending on whether they are non-fatigued (control) or fatigued. The goal was to see whether there was a significant shift in the angle at which the maximum isometric force occurred. Prior studies have found that there is indeed a correlation and that compared to non-fatigued muscles, fatigued ones are associated with a shift to the right, meaning that "fatigued muscles favor force generation at longer lengths" [@biewener2006tired]. To further study this relationship and verify this hypothesis class-wide data on maximum voluntary contractions was collected both for fatigued and non-fatigued muscles and was then analysed in an effort to see whether this data set also showed a rightward shift.
+The aim of this project was to study the shift of the Force-Length relationship of muscles depending on whether they are non-fatigued (control) or fatigued. The goal was to see whether there was a significant shift in the angle at which the maximum isometric force occurred. Prior studies have found that there is indeed a correlation and that compared to non-fatigued muscles, fatigued ones are associated with a shift to the right, meaning that "fatigued muscles favor force generation at longer lengths" [@biewener2006tired]. To further study this relationship and verify this hypothesis, class-wide data on maximum voluntary contractions was collected both for fatigued and non-fatigued muscles and was then analysed in an effort to see whether this data set also showed a rightward shift.
 
 ## Methods
 
-To study the force-length (FL) relationship of the muscle depensing on the muscle fatigue, we constructed a goniometer to measure the forearms angles relative to the upper arm, and measured the maximum force output, or maximum voluntary contractions (MVC) from the forearms at every 11.25° from 45° to 157.5°. The force output was measured 12 times when the muscle was non-fatigued because it had been at rest (control) using a 40-kg Load Cell with an HX711 amplifier as well as an Arduino Uno micro-controller. The forearm flexors were then eccentrically fatigued using a heavy bag that was repeatedly lowered for a total of three minutes. After a two minute rest, the MVCs were recorded another 12 times, now for the fatigued muscles, with the same set-up as for the control group. 
+To study the force-length (FL) relationship of the muscle depending on the muscle fatigue, we constructed a goniometer to measure the forearms angles relative to the upper arm, and measured the maximum force output, or maximum voluntary contractions (MVC), from the forearms at every 11.25° from 45° to 157.5°. The force output was measured 12 times when the muscle was non-fatigued because it had been at rest (control) using a 40-kg Load Cell with an HX711 amplifier as well as an Arduino Uno micro-controller. The forearm flexors were then eccentrically fatigued using a heavy bag that was repeatedly lowered for a total of three minutes. After a two minute rest, the MVCs were recorded another 12 times, now for the fatigued muscles, with the same set-up as for the control group. 
 
 For the data analysis part of this project, the first step was to, each individual, find the maximum force of each of the MVC recording, then the maximum force (Fmax) across all of the angles of the experiments (either control or fatigued), and then divide each maximum force for each angle by Fmax, which normalized the values.
 It was then possible to look at which angle Fmax was at. The data for both the control muscles and the fatigued muscles were plotted on the same graphs in order to allow for an easier visualization of the shift of the angle at which Fmax occurred. Finally, to quantify this shift, the angle of Fmax for the control was subracted from the angle of Fmax for the fatigued muscles to find the mean shift, quantitatively.
@@ -30,7 +30,7 @@ It was then possible to look at which angle Fmax was at. The data for both the c
 ## Results
 After the class data was collected, the maximum force of all angles for each experiment of every individual was found, and was used to normalize the values. 
 
-To investigate if force-angle data for MVCs follow typical FL relationships in either condition, the maximum force for all angles will and experiments will be plotted. To better see the relationship, the mean maximum force of each angle was calculated.
+To investigate if force-angle data for MVCs follow typical FL relationships in either condition, the maximum force for all angles and experiments will be plotted. To better see the relationship, the mean maximum force of each angle was calculated.
 
 ```{r, "organizing class data", include=FALSE}
 dat.fat <- list.files(path = "Project 8 data", recursive = TRUE,
@@ -146,6 +146,12 @@ best.models%>%
   ungroup()%>%
   summarise(mean.shift=mean(shift),se.shift=sd(shift)/sqrt(length(shift)))
 ```
+
+## Discussion
+This project looked at the how the FL relationship of human upper limbs responds to eccentric fatigue in the muscle. The results of this experiment using class-wide force angle data for isometric MVC under the control and fatigued conditions show that neither seem to follow a typical FL relationship. In a typical FL relationship muscles generate the greatest force when they are at their optimal length with the maximum actin-myosin interactions, and the least force when they are shorted or stretched out in comparison to their resting length [@lieber2011skeletal]. This expected decrease as the muscle extends more intensely was not visualized in the plot, and instead the force steadily increased with a bit of a plateau at the end.
+
+Additionally, the data show a significant shift in θmax between the control and fatigue FL relationships, supported by an ANOVA test. This finding is consistent with findings of previous studies stated above, that fatigued muscles are associated with a shirt to the right showing that they are more favored at longer lengths. A mean shift of 8.65 degrees was found for θmax. This experiment furthers the research in the area of upper arm biomechanics to allow a deeper understanding of fatigue's role on the FL relationship.
+
 
 ## Author Contributions
 Stefanie Flores did the coding for this project.
