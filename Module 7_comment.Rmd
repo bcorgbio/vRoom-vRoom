@@ -1,0 +1,170 @@
+---
+title: "Module 7 Project"
+author: "vRoom-vRoom"
+date: "11-27-22"
+output: html_document
+bibliography: BIOL3140.bib
+---
+````{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(vroom)
+library(readr)
+library(dplyr)
+library(MuMIn)
+`````
+## Introduction
+
+The aim of this project was to study the shift of the Force-Length relationship of muscles depending on whether they are non-fatigued (control) or fatigued. The goal was to see whether there was a significant shift in the angle at which the maximum isometric force occurred. Prior studies have found that there is indeed a correlation and that compared to non-fatigued muscles, fatigued ones are associated with a shift to the right, meaning that "fatigued muscles favor force generation at longer lengths" [@biewener2006tired]. To further study this relationship and verify this hypothesis, class-wide data on maximum voluntary contractions was collected both for fatigued and non-fatigued muscles and was then analysed in an effort to see whether this data set also showed a rightward shift.
+
+## Methods
+
+To study the force-length (FL) relationship of the muscle depending on the muscle fatigue, we constructed a goniometer to measure the forearms angles relative to the upper arm, and measured the maximum force output, or maximum voluntary contractions (MVC), from the forearms at every 11.25° from 45° to 157.5°. The force output was measured 12 times when the muscle was non-fatigued because it had been at rest (control) using a 40-kg Load Cell with an HX711 amplifier as well as an Arduino Uno micro-controller. The forearm flexors were then eccentrically fatigued using a heavy bag that was repeatedly lowered for a total of three minutes. After a two minute rest, the MVCs were recorded another 12 times, now for the fatigued muscles, with the same set-up as for the control group. 
+
+For the data analysis part of this project, the first step was to, each individual, find the maximum force of each of the MVC recording, then the maximum force (Fmax) across all of the angles of the experiments (either control or fatigued), and then divide each maximum force for each angle by Fmax, which normalized the values.
+It was then possible to look at which angle Fmax was at. The data for both the control muscles and the fatigued muscles were plotted on the same graphs in order to allow for an easier visualization of the shift of the angle at which Fmax occurred. Finally, to quantify this shift, the angle of Fmax for the control was subracted from the angle of Fmax for the fatigued muscles to find the mean shift, quantitatively.
+
+## Results
+After the class data was collected, the maximum force of all angles for each experiment of every individual was found, and was used to normalize the values. 
+
+To investigate if force-angle data for MVCs follow typical FL relationships in either condition, the maximum force for all angles and experiments will be plotted. To better see the relationship, the mean maximum force of each angle was calculated.
+
+```{r, "organizing class data", include=FALSE}
+dat.fat <- list.files(path = "Project 8 data", recursive = TRUE,
+                  pattern = ".csv", 
+                  full.names = TRUE)
+
+dat.l <- list() #empty list
+
+for(i in dat.fat){
+  met.dat<- unlist(strsplit(i,"_"))
+  group <- gsub("Project 8 data/", " ", met.dat[1])
+  subject <- met.dat[2]
+  ang <- as.numeric(met.dat[3])
+  activity <- gsub(".csv","",met.dat[4])
+  
+  dat.l[[i]]<- read_delim(i, delim= " ", col_names = c("Reading","Force","Unit"))%>%
+    mutate(Group=group,Subject=subject, Angle=ang, Activity = activity)
+  
+}
+data <- do.call(rbind,dat.l) #get data into one tibble
+
+
+dat.1 <- arrange(data, Group, Subject, Angle) %>% 
+  filter(Angle != 22.5)
+
+dat.max_recording <- dat.1 %>% 
+  group_by(Subject, Angle, Activity) %>% 
+  summarize(max_recording = max(Force))
+
+
+dat.max_subject <- dat.1 %>% 
+  group_by(Subject, Activity) %>% 
+  summarize(max_subject = max(Force))
+
+
+dat.max_joined <- dat.max_subject %>% 
+  left_join(dat.max_recording) %>% 
+  group_by(Subject, Angle, Activity) %>% 
+  mutate(max_norm = max_recording/max_subject)
+
+dat.class_means <- dat.max_joined %>% 
+  group_by(Angle, Activity) %>% 
+  mutate(class_mean = mean(max_norm))
+
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
+
+```
+
+```{r,  echo=FALSE,"Plot of mean maximum force per angle for both control and fatigue Experiments", fig.cap="Plot of mean normalized maximum force angles for both control and fatigued experiments", fig.align='center'}
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
+```
+
+
+To investigate if there is a significant shift in the maximum isometric force between control and fatigued groups, the difference in the angle at which the maximum force occurred will be examined. Since the angle of maximum force likely occured between measurements, the data from each experiment will be fitted one of several polynomial models, with the max of the best fitting model representing the angle of maximum force.
+To test if there is a significant shift, an ANOVA test was conducted.
+
+
+```{r, "fitting best model ",include=FALSE}
+dat.class_means <- dat.max_joined %>% 
+  group_by(Angle, Activity) %>% 
+  mutate(class_mean = mean(max_norm))
+
+dat.class_means %>% 
+  ggplot(aes(x=Angle, y=class_mean, col = Activity))+geom_point() 
+
+
+AICs <- dat.max_joined%>%
+  group_by(Subject,Activity)%>%
+  summarize(
+    m2=AICc(lm(max_norm~poly(Angle,2))), #second order
+    m3=AICc(lm(max_norm~poly(Angle,3))), #third order
+    m4=AICc(lm(max_norm~poly(Angle,4))) #fourth order
+  )%>%
+  pivot_longer(m2:m4,names_to="model",values_to="AICc")%>%
+  print()
+
+x.pred<-seq(45,157.5,length.out=1000)
+fits <- dat.max_joined%>%
+  group_by(Subject,Activity)%>%
+  summarize(
+    m2=predict(lm(max_norm~poly(Angle,2)),newdata=data.frame(Angle=x.pred)), #second order
+    m3=predict(lm(max_norm~poly(Angle,3)),newdata=data.frame(Angle=x.pred)), #third order
+    m4=predict(lm(max_norm~poly(Angle,4)),newdata=data.frame(Angle=x.pred)) #fourth order
+  )%>%
+  pivot_longer(m2:m4,names_to="model")%>%
+  group_by(Subject,Activity,model)%>%
+  summarize(theta_max=x.pred[which.max(value)])%>%
+  print()
+
+best.models <- fits%>%
+  left_join(AICs)%>%
+  group_by(Subject,Activity)%>%
+  mutate(best=AICc==min(AICc))%>%
+  filter(best==TRUE)%>%
+  dplyr::select(-best)%>%
+  print()
+
+```
+
+```{r,"Anova Test", echo =FALSE}
+
+anova(lm(theta_max~Activity,best.models))
+```
+
+Finally, the mean shift and standard error was calculated.
+```{r, "mean shift calculation", echo=FALSE}
+best.models%>%
+  filter(Subject != 25) %>% 
+  pivot_wider(id_cols=Subject,names_from = Activity,values_from=theta_max)%>%
+  mutate(shift=fatigue-control)%>%
+  ungroup()%>%
+  summarise(mean.shift=mean(shift),se.shift=sd(shift)/sqrt(length(shift)))
+```
+
+## Discussion
+This project looked at the how the FL relationship of human upper limbs responds to eccentric fatigue in the muscle. The results of this experiment using class-wide force angle data for isometric MVC under the control and fatigued conditions show that neither seem to follow a typical FL relationship. In a typical FL relationship muscles generate the greatest force when they are at their optimal length with the maximum actin-myosin interactions, and the least force when they are shorted or stretched out in comparison to their resting length [@lieber2011skeletal]. This expected decrease as the muscle extends more intensely was not visualized in the plot, and instead the force steadily increased with a bit of a plateau at the end.
+
+Additionally, the data show a significant shift in θmax between the control and fatigue FL relationships, supported by an ANOVA test. This finding is consistent with findings of previous studies stated above, that fatigued muscles are associated with a shirt to the right showing that they are more favored at longer lengths. A mean shift of 8.65 degrees was found for θmax. This experiment furthers the research in the area of upper arm biomechanics to allow a deeper understanding of fatigue's role on the FL relationship.
+
+
+## Author Contributions
+Stefanie Flores did the coding for this project.
+Clementine Paris did the introduction and methods sections.
+Steve Mooney did the result section.
+Laura Ellis did the discussion section of this project.
+
+## CPK comments
+
+Excellent work. Great job putting the code together to model the shifts. And you found one!! Your discussion is great, too. 
+
+My only criticism is that tables should be formatted (e.g., with `kable`) and they need a caption above them. (-2)
+
+
+72/75
+## References
